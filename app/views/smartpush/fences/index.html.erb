@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 50%;
+        width: 50%
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+
+
+    <div id="map"></div>
+
+    <label class="control-label">Enter a radius for the fence in meters (100 - 10000)</label>
+
+    <input id='setRadius' type="text" name="setRadius">
+
+
+      <input onclick="postValuesToServer();" type='button' value="Submit Zones"/>
+
+  <input onclick="clearOverlays();" type='button' value="Clear Zones"/>
+
+  <input onclick="setMarker();" type='button' value="Create Zone"/>
+
+  <input id="hiddenLat" type="text"/>
+  <br />
+  <input id="hiddenLng" type="text"/>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+    <script>
+    var map;
+    // Map
+
+    var circlesArray = [];
+    // Add all circles here
+    var markersArray = [];
+    // Add all markers here
+    var TempMarker = [];
+
+    var id;
+    var markers = {};
+
+    var latArray = [];
+    var lngArray = [];
+    var radiusArray = [];
+
+    var arr = new Array();
+
+    var request_type ="";
+
+    var positionLatLng;
+
+  function initMap() {
+    var mapLocation = new google.maps.LatLng(31.467934, 74.425973);
+  // Train of Thought office
+
+  var mapOptions = {
+    zoom : 12,
+    center : mapLocation,
+    mapTypeId : google.maps.MapTypeId.ROADMAP
+  };
+
+  map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+  google.maps.event.addListener(map, 'dblclick', function(event) {// Add event Listeners on Click and Double click
+    placeMarkerDBL(event.latLng);
+  });
+
+  google.maps.event.addListener(map, 'click', function(event) {
+    placeMarker(event.latLng);
+  });
+
+  }
+
+
+// Initialize all markers Display, we need not to add any event listeners for this function.
+
+function initializeDisplay() {// This is Initialize Function
+
+  var mapLocation = new google.maps.LatLng(31.467934, 74.425973);
+  // Train of Thought office
+
+  var mapOptions = {
+    zoom : 12,
+    center : mapLocation,
+    mapTypeId : google.maps.MapTypeId.ROADMAP
+  };
+
+  map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+
+}
+
+
+
+function addMarker(location) {
+  marker = new google.maps.Marker({
+    position : location,
+    map : map
+  });
+  markersArray.push(marker);
+}
+
+// Removes the overlays from the map, but keeps them in the array
+function clearOverlays() {
+
+  if (TempMarker) {
+    for (k in TempMarker) {
+      TempMarker[k].setMap(null);
+    }
+  }
+
+  if (markersArray) {
+    for (i in markersArray) {
+      markersArray[i].setMap(null);
+    }
+  }
+  markersArray.length = 0;
+  // Clearing all values in array
+
+  if (circlesArray) {
+
+    for (j in circlesArray) {
+      console.log("Clear Circle" + j);
+      circlesArray[j].setMap(null);
+    }
+  }
+  circlesArray.length = 0;
+  // Clearing all values in array
+
+  latArray.length = 0;
+  // Clearing hidden lat and lng
+  lngArray.length = 0;
+
+  radiusArray.length = 0;
+
+  var x = document.getElementById('hiddenRadiusArray');
+
+  // x.value="";
+}
+
+// Shows any overlays currently in the array
+function showOverlays() {
+  if (markersArray) {
+    for (i in markersArray) {
+      markersArray[i].setMap(map);
+    }
+  }
+}
+
+// Deletes all markers in the array by removing references to them
+function deleteOverlays() {
+  if (markersArray) {
+    for (i in markersArray) {
+      markersArray[i].setMap(null);
+    }
+    markersArray.length = 0;
+  }
+}
+
+function plotPointOnMap() {
+}
+
+function placeMarker(location) {// placeMarker function is called when you click on map and values are stored in hidden variable hiddenLat, hiddenLng
+  // Function to place marker
+
+  /////////////////////////////
+  //// Remove Temporary Marker
+  /////////////////////////////
+
+  if (TempMarker) {
+    for (i in TempMarker) {
+      TempMarker[i].setMap(null);
+    }
+  }
+  /////////////////////////////
+  ///// Place Temporary Marker
+  ////////////////////////////
+
+  markerTemp = new google.maps.Marker({
+    position : location,
+    map : map
+  });
+  TempMarker.push(markerTemp);
+
+  ////////////////////////////
+
+  positionLatLng = location;
+  document.getElementById("hiddenLng").value = location.lng();
+  document.getElementById("hiddenLat").value = location.lat();
+
+  positionLatLng = location;
+
+}
+
+function placeMarkerDBL(location) {
+  // Function to place marker
+
+  /////////////////////////////
+  //// Remove Temporary Marker
+  /////////////////////////////
+
+  if (TempMarker) {
+    for (i in TempMarker) {
+      TempMarker[i].setMap(null);
+    }
+  }
+
+  ////////////////////////////
+
+  /////////////////////////////
+  ///// Place Temporary Marker
+  ////////////////////////////
+
+  markerTemp = new google.maps.Marker({
+    position : location,
+    map : map
+  });
+  TempMarker.push(markerTemp);
+
+  ////////////////////////////
+  positionLatLng = location;
+  document.getElementById("hiddenLat").value = location.lat();
+  document.getElementById("hiddenLng").value = location.lng();
+
+  console.log("Double" + location);
+
+}
+
+function setMarker() {// Place Marker
+
+  var lat = document.getElementById("hiddenLat").value;
+  var lng = document.getElementById("hiddenLng").value;
+  
+  if(lat == ""){
+     
+    alert("No marker placed on map.");
+    return false; 
+    
+  }
+  
+  var setRadiusValue = document.getElementById('setRadius').value;
+  
+  //request_type = document.getElementById('request-type').value;
+  
+  var intRegex = /^\d+$/;
+  if(!intRegex.test(setRadiusValue)) {
+      alert('Not a valid integer value for radius');
+      return false;
+  }
+  
+  if(setRadiusValue > 10000 || setRadiusValue < 100 ) {
+      alert('Not a valid value for radius');
+      return false;
+  }
+
+  ///////////////////////////////////////////////////////////////////////
+  ////// Confirm Box - To Confirm if user Agrees with options he selected.
+  ///////////////////////////////////////////////////////////////////////
+
+  var userConformation = confirm("Place marker with radius of " + document.getElementById('setRadius').value + " meters ?");
+  if (userConformation == false) {
+    return;
+    // User is not ready to place marker here
+  }
+
+  ///////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////
+  // Check if values already exists or not
+  ////////////////////////////////////////
+
+  if (latArray) {
+    for (i in latArray) {
+      console.log("latArray: " + latArray[i] + " " + lat);
+
+      if (latArray[i] == lat) {
+
+        alert("location already selected, choose another location");
+        return;
+      }
+    }
+  }
+
+  ////////////////////////////////////////
+
+  var userPosition = new google.maps.LatLng(lat, lng);
+  console.log("User Position: " + userPosition);
+
+  //var userPosition = lat + "," + lng;
+  // positionLatLng = location;
+
+  console.log("set Marker function" + userPosition);
+  marker = new google.maps.Marker({
+    position : userPosition,
+    map : map
+  });
+
+  ////////////////////////////////////////
+  // Enter Circle
+  ////////////////////////////////////////
+
+  var setRadiusValue = document.getElementById('setRadius').value;
+  console.log("setRadiusValue: " + setRadiusValue);
+
+  var lat = document.getElementById("hiddenLat").value;
+  
+  /*
+  if (setRadiusValue == '') {
+    alert('Radius Not set');
+    setRadiusValue = 1000;
+  }*/
+
+  console.log("setRadius: " + setRadiusValue);
+  console.log("Lets create Circle");
+  var sunCircle = {
+    strokeColor : "#c3fc49",
+    strokeOpacity : 0.8,
+    strokeWeight : 2,
+    fillColor : "#c3fc49",
+    fillOpacity : 0.35,
+    map : map,
+    center : userPosition,
+    radius : parseInt(setRadiusValue), // in meters
+    //editable:true
+  };
+  cityCircle = new google.maps.Circle(sunCircle);
+  cityCircle.bindTo('center', marker, 'position');
+
+  radiusArray.push(setRadiusValue);
+
+  setRadiusValue = '';
+  // Again initialize Radius
+  /////////////////////////////////////////////
+  markersArray.push(marker);
+  circlesArray.push(cityCircle);
+
+  console.log("Circle Array Size: " + circlesArray.length);
+
+  latArray.push(lat);
+  lngArray.push(lng);
+
+  console.log("Lat Array: " + latArray);
+  console.log("Lng Array: " + lngArray);
+  console.log("Aray size: " + lngArray.length);
+
+  // hiddenRadiusArray
+  // document.getElementById("hiddenRadiusArray").value = radiusArray;
+  // document.getElementById("hiddenLatArray").value = latArray;
+  // document.getElementById("hiddenLngArray").value = lngArray;
+}
+
+function setAllMarkers() {// Place All Makers on Map Markers
+
+  var responseJson;
+
+  $.ajax({
+    url : "/get_json_for_map",
+    type : "GET",
+    dataType : "json",
+    success : function(data) {
+
+      responseJson = JSON.stringify(data);
+
+      plotMarkersOnMap(responseJson);
+
+    },
+    error : function(error) {
+
+      console.log("Error:");
+      console.log(error);
+    }
+  });
+
+  console.log("setAllMarkers object to string " + latArray.length + " lng Array length: " + lngArray.length + " radius len: " + radiusArray.length);
+
+}
+
+function setAllMarkersClick() {// Place All Makers on Map Markers
+
+  var responseJson;
+
+  $.ajax({
+    url : "/get_json_for_map",
+    type : "GET",
+    dataType : "json",
+    success : function(data) {
+
+      responseJson = JSON.stringify(data);
+
+      plotMarkersOnMapClick(responseJson);
+
+    },
+    error : function(error) {
+
+      console.log("Error:");
+      console.log(error);
+    }
+  });
+
+  console.log("setAllMarkers object to string " + latArray.length + " lng Array length: " + lngArray.length + " radius len: " + radiusArray.length);
+
+}
+
+//click
+
+function plotMarkersOnMapClick(data) {
+
+  var idArray = new Array();
+  var jsonData = JSON.parse(data);
+  //alert("Json: " + data);
+
+  var json_parsed = $.parseJSON(data);
+
+  for (var u = 0; u < json_parsed.fences.length; u++) {
+
+    //alert("User id: " + JSON.stringify(json_parsed.fences[u].id));
+
+    latArray.push(parseFloat(JSON.stringify(json_parsed.fences[u].lat)));
+    lngArray.push(parseFloat(JSON.stringify(json_parsed.fences[u].lng)));
+    radiusArray.push(parseFloat(JSON.stringify(json_parsed.fences[u].radius)));
+    idArray.push(parseFloat(JSON.stringify(json_parsed.fences[u].id)));
+
+  }
+
+  if (latArray) {
+    var j = 0;
+    for (i in latArray) {
+
+      var userPosition = new google.maps.LatLng(latArray[j], lngArray[j]);
+      //alert("UserPosition: " + userPosition);
+
+      ///////////////////// Set Marker //////////////////////
+
+      marker = new google.maps.Marker({
+        position : userPosition,
+        map : map,
+        idArray : idArray[j]
+      });
+      google.maps.event.addListener(marker, 'click', function(event) {
+        //alert("Marker id: " + this.idArray);
+        var markerId = this.idArray;
+        $.ajax({
+          type : "Get",
+          beforeSend : function(xhr) {
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+          },
+          url : "/get_violated_fences_json",
+          data : {
+            "fence_id" : markerId
+          },
+        }).done(function(msg) {
+          //window.location.href = "/fences";
+          var jsonData = msg.fences;
+          //console.log(jsonData.length);
+          var div = "";
+          for (var u = 0; u < jsonData.length; u++) {
+            console.log(jsonData[u].id);
+            div += '<tr class="gradeX odd">';
+            div += '<td>'+jsonData[u].fence_id+'</td><td>'+jsonData[u].lat+'</td><td>'+jsonData[u].lng+'</td><td>'+jsonData[u].date+'</td>';
+            div += '<td> <a class="update_recent" data-confirm="Are you sure?" data-method="delete" href="/fence_violation_delete?id='+jsonData[u].id+'" rel="nofollow">';
+            div += '<button data-dismiss="modal" class="btn gray">Delete</button> </a> </td>';
+            div += '</tr>';
+
+             
+            
+          }
+          //console.log(div);
+          $('#replace_body').html(div);
+          //console.log(JSON.stringify(msg));
+          /*<tr class="gradeX odd">
+           <td>1</td>
+           <td>3</td>
+           <td>30.45</td>
+           <td>70.34</td>
+           <td>20-12-2013</td>
+           <td> <a class="update_recent" data-confirm="Are you sure?" data-method="delete" href="/fence_violation_delete?id=1" rel="nofollow">
+           <button data-dismiss="modal" class="btn gray">
+           Delete
+           </button> </a> </td>
+           </tr>*/
+        });
+
+      });
+      markersArray.push(marker);
+
+      //////////////////// draw circle /////////////////////
+
+      var sunCircle = {
+        strokeColor : "#c3fc49",
+        strokeOpacity : 0.8,
+        strokeWeight : 2,
+        fillColor : "#c3fc49",
+        fillOpacity : 0.35,
+        map : map,
+        center : userPosition,
+        radius : parseInt(radiusArray[j]), // in meters
+        //editable:true
+      };
+      cityCircle = new google.maps.Circle(sunCircle);
+      cityCircle.bindTo('center', marker, 'position');
+
+      j++;
+
+    }
+  }
+
+  //console.log(JSON.stringify(responseJson));
+
+}
+
+//click
+
+function plotMarkersOnMap(data) {
+
+  //alert("in Plot marker function: " + JSON.stringify(responseJson));
+
+  // parseFloat
+
+  var jsonData = JSON.parse(data);
+  //alert("Json: " + data);
+
+  var json_parsed = $.parseJSON(data);
+
+  for (var u = 0; u < json_parsed.fences.length; u++) {
+
+    //alert("User id: " + JSON.stringify(json_parsed.fences[u].id));
+
+    latArray.push(parseFloat(JSON.stringify(json_parsed.fences[u].lat)));
+    lngArray.push(parseFloat(JSON.stringify(json_parsed.fences[u].lng)));
+    radiusArray.push(parseFloat(JSON.stringify(json_parsed.fences[u].radius)));
+
+  }
+
+  if (latArray) {
+    var j = 0;
+    for (i in latArray) {
+
+      var userPosition = new google.maps.LatLng(latArray[j], lngArray[j]);
+      //alert("UserPosition: " + userPosition);
+
+      ///////////////////// Set Marker //////////////////////
+
+      marker = new google.maps.Marker({
+        position : userPosition,
+        map : map
+      });
+
+      markersArray.push(marker);
+
+      //////////////////// draw circle /////////////////////
+
+      var sunCircle = {
+        strokeColor : "#c3fc49",
+        strokeOpacity : 0.8,
+        strokeWeight : 2,
+        fillColor : "#c3fc49",
+        fillOpacity : 0.35,
+        map : map,
+        center : userPosition,
+        radius : parseInt(radiusArray[j]), // in meters
+        //editable:true
+      };
+      cityCircle = new google.maps.Circle(sunCircle);
+      cityCircle.bindTo('center', marker, 'position');
+
+      j++;
+
+    }
+  }
+
+  //console.log(JSON.stringify(responseJson));
+
+}
+
+function postValuesToServer() {
+
+  if (latArray.length == 0){
+      
+    alert("No markers Placed. Please place one or more markers to create fences");
+    return false;
+  }
+
+  //var arr = new Array();
+
+  for (var i = 0; i < latArray.length; i++) {
+
+    obj = new Object();
+
+    obj.lat = latArray[i];
+    obj.lng = lngArray[i];
+    obj.radius = radiusArray[i];
+    console.log("Object here: " + JSON.stringify(obj));
+    arr.push(obj);
+
+  }
+  // JSON.stringify(obj);
+  console.log("object to string " + JSON.stringify(arr) + latArray.length + " lng Array length: " + lngArray.length + " radius len: " + radiusArray.length);
+  
+
+  sendDataToController();
+}
+
+function sendDataToController() {
+  //alert("Send Data to Controller");
+
+  $.ajax({
+    type : "POST",
+    beforeSend : function(xhr) {
+      xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+    },
+    url : "/fences",
+    data : {
+      "fences_arr" : JSON.stringify(arr),
+      "request_type":request_type
+    },
+  }).done(function(msg) {
+    // window.location.href = "/fences";
+    console.log(msg);
+  });
+
+}
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBa5gmxUw_arCDyQki0WFSuwZyaX1qhO3c&callback=initMap"
+    async defer></script>
+
+
+
+  </body>
+</html>

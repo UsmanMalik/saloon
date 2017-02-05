@@ -1,0 +1,130 @@
+
+
+
+<div class="ibox-content m-b-sm borer-bottom" >
+    <div class="p-xs">
+        <div class="pull-left m-r-md">
+            <i class="fa fa-user fa-5x text-navy mid-icon"></i>
+        </div>
+        <h2>Appointments</h2>
+        <span>Create and manage your users. You can also actviate/deactivate them at any point of time. To view individual users activity please go to the deatils page of individual user.</span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="wrapper wrapper-content animated fadeInUp ibox-content m-b-sm">
+
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Appointments</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="project-list">
+                        <table class="table table-hover" id="users_table">
+                            <tbody>
+                             <% @appointments.each do |appointment| %>
+                                <tr id="row_<%= appointment.id %>">
+
+                                    <td><%=appointment.id%></td>
+                                    <td><%=appointment.user.nil? ? "" :  appointment.user.first_name%></td>
+                                    <td><%=appointment.user.nil? ? "" : appointment.user.email%></td>
+                                    <td><%=appointment.appointment_date%></td>
+                                    <td><%=appointment.appointment_time.hour.to_s + "h " + appointment.appointment_time.min.to_s + "m" %></td>
+                                    <td><span class="label label-info"><%=appointment.status%></span></td>
+                                    <td><%= link_to "Approve", approve_appointment_appointment_path(appointment), :class => "btn btn-icon btn-success m-b-5", method: :put, data: { confirm: 'Are you sure?' } %></td>
+                                    <td><%= link_to "Decline", decline_appointment_appointment_path(appointment), :class => "btn btn-icon btn-danger m-b-5", method: :put, data: { confirm: 'Are you sure you want to decline appointment ?' } %></td>
+                                    <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                                    send message
+                                </button></td>
+                                </tr>
+                                <% end %>
+                            </tbody>
+                        </table>
+                        <div class="pagination">
+                        <% #will_paginate @users %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal inmodal fade" id="myModal6" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Send instant message to user</h4>
+            </div>
+            <div class="modal-body">
+                        <div class="ibox-content">
+                            <form class="form-horizontal">
+                                <p>Please type in the message to send instantly.</p>
+                                <div class="form-group"><label class="col-lg-2 control-label">Title</label>
+
+                                    <div class="col-lg-10"><input type="email" placeholder="Email" class="form-control"> <span class="help-block m-b-none">title block-level help text here.</span>
+                                    </div>
+                                </div>
+                                <div class="form-group"><label class="col-lg-2 control-label">Message</label>
+
+                                    <div class="col-lg-10"><input type="textarea" placeholder="Password" class="form-control"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-lg-offset-2 col-lg-10">
+                                        <button class="btn btn-sm btn-white" type="submit">Send</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>            
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-laptop modal-icon"></i>
+                <h4 class="modal-title">Instant Message</h4>
+                <small class="font-bold">Please create teh instant message and push to the users..</small>
+            </div>
+            <div class="modal-body">
+                        <div class="ibox-content">
+                            <form class="form-horizontal">
+                                <p>Please type in the message to send instantly.</p>
+                                <div class="form-group"><label class="col-lg-2 control-label">Title</label>
+
+                                    <div class="col-lg-10"><input type="email" placeholder="title" class="form-control"> <span class="help-block m-b-none"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group"><label class="col-lg-2 control-label">Message</label>
+
+                                    <div class="col-lg-10"><input type="textarea" placeholder="message" class="form-control"></div>
+                                </div>
+                            </form>
+                        </div>            
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
