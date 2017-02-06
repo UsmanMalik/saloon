@@ -37,80 +37,34 @@
     
     </div> <!-- End row -->
 
-    <div class="row">
-
-        <%@staffs.each do |staff| %>
-        <div class="col-sm-6">
-            <div class="panel">
-                <div class="panel-body">
-                    <div class="media-main">
-                        <a class="pull-left" href="#">
-                            <img class="thumb-lg img-circle bx-s" src=<%= asset_path 'avatar-9.jpg' %> alt="">
-                        </a>
-                        <div class="pull-right btn-group-sm">
-                            <a href="#" class="btn btn-success tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Edit">
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                            <a href="#" class="btn btn-danger tooltips" data-placement="top" data-toggle="tooltip" data-original-title="Delete">
-                                <i class="fa fa-close"></i>
-                            </a>                                           
-                        </div>
-                        <div class="info">
-                            <h4><%= staff.first_name%></h4>
-                            <p class="text-muted">Graphics Designer</p>
-                        </div>
-                    </div>
-                    <div class="clearfix"></div>
-                    <hr/>
-                    <ul class="social-links list-inline p-b-10">
-                        <li>
-                            <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="#" data-original-title="Facebook"><i class="fa fa-facebook"></i></a>
-                        </li>
-                        <li>
-                            <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="#" data-original-title="Twitter"><i class="fa fa-twitter"></i></a>
-                        </li>
-                        <li>
-                            <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="#" data-original-title="LinkedIn"><i class="fa fa-linkedin"></i></a>
-                        </li>
-                        <li>
-                            <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="#" data-original-title="Skype"><i class="fa fa-skype"></i></a>
-                        </li>
-                        <li>
-                            <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="#" data-original-title="Message"><i class="fa fa-envelope-o"></i></a>
-                        </li>
-                    </ul>
-                </div> <!-- panel-body -->
-            </div> <!-- panel -->
-        </div> <!-- end col -->
-        <%end%>
+</div> <!-- END Wraper -->
 
 
-    </div> <!-- End row -->
-<!-- 
-    <div class="row">
-        <div class="col-sm-12">
-            <ul class="pagination pull-right">
-                <li>
-                  <a href="#" aria-label="Previous">
-                    <i class="fa fa-angle-left"></i>
-                  </a>
-                </li>
-                <li><a href="#">1</a></li>
-                <li class="active"><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li class="disabled"><a href="#">4</a></li>
-                <li><a href="#">5</a></li>
-                <li>
-                  <a href="#" aria-label="Next">
-                    <i class="fa fa-angle-right"></i>
-                  </a>
-                </li>
-            </ul>
+<div class="row">
+ <%@staffs.each do |staff| %>
+
+    <div class="col-lg-4">
+        <div class="contact-box">
+            <a href="profile.html">
+            <div class="col-sm-4">
+                <div class="text-center">
+                    <img alt="image" class="img-circle m-t-xs img-responsive" src=<%= asset_path 'avatar-9.jpg' %> >
+                    <div class="m-t-xs font-bold">Graphics designer</div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <h3><strong><%= staff.first_name%></strong></h3>
+                <p><i class="fa fa-map-marker"></i> Riviera State 32/106</p>
+                <address>
+                    <strong>Twitter, Inc.</strong><br>
+                    795 Folsom Ave, Suite 600<br>
+                    San Francisco, CA 94107<br>
+                    <abbr title="Phone">P:</abbr> (123) 456-7890
+                </address>
+            </div>
+            <div class="clearfix"></div>
+                </a>
         </div>
     </div>
- -->
-
-   
-
-
-</div> <!-- END Wraper -->
+ <%end%>
+</div> 

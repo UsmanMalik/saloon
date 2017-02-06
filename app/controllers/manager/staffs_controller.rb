@@ -2,6 +2,7 @@ module Manager
 	class StaffsController < ApplicationController
     
     before_action :set_staff, only: [:show, :edit, :update, :destroy]
+    layout "application"
 
 
     def index

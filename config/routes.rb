@@ -3,9 +3,9 @@ Rails.application.routes.draw do
 
 
   # resources :campaigns
-  resources :cats
+  # resources :cats
   devise_for :admins
-  get 'hello/index'
+  # get 'hello/index'
 
   root "manager/dashboard#index"
   # get 'dashboard/index'
